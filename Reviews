@@ -1,0 +1,152 @@
+package csc212project11;
+
+
+import java.io.File;
+import java.util.Scanner;
+
+public class Reviews {
+    private  BST<Review> reviews;
+    private Products all_products;
+    private Customers all_Customers;
+
+    public Reviews(BST<Review> input_reviews, BST<Product> input_products, BST<Customer> input_customers) {
+    	if (input_reviews == null)
+            this.reviews = new BST<>();
+        else
+            this.reviews = input_reviews;
+        all_products = new Products(input_products);
+        all_Customers = new Customers(input_customers);
+    }
+
+    public Reviews() {
+        reviews = new BST<>();
+        all_products = new Products();
+        all_Customers = new Customers();
+    }
+
+    public BST<Review> get_all_Reviews() {
+        return reviews;
+    }
+
+    public Products get_all_Products() {
+        return all_products;
+    }
+
+  public Review Search_Review_by_id(int id){
+    if (reviews.empty()){
+        return null;
+    }
+
+    boolean found = reviews.findKey(id);
+    if(found)
+        return reviews.retrieve();
+    else
+
+    return null;
+}
+
+    public void assign_to_product(Review r) {
+        Product p = all_products.Search_Product_by_id(r.getProductId());
+        if (p != null)
+            p.addReview(r);
+    }
+
+    public void assign_to_customer(Review r) {
+        Customer p = all_Customers.searchById(r.getCustomerId());
+        if (p != null)
+            
+            p.addReview(r);
+    }
+
+    // Add new Review
+   public void addReview(Review r) {
+    if (Search_Review_by_id(r.getReviewId())==null) {
+        reviews.insert(r.getReviewId(), r);
+        assign_to_product(r);
+        assign_to_customer(r);
+
+    } else {
+        System.out.println("Review with ID " + r.getReviewId() + " already exists!");
+    }
+}
+
+
+    public void updateReview(int id, Review p) {
+        Review old = Search_Review_by_id(id);
+        if (old == null)
+            System.out.println("not exist to make update");
+        else
+            old.UpdateReview(p);
+    }
+
+    // Display all reviews
+    
+  public void displayAllReviews() {
+    System.out.println("=== All Reviews ===");
+    if (reviews.empty()){
+        System.out.println("no reviews exist");
+        return ;
+    }
+    else{
+        inOrder_all_Reviews(reviews.getRoot());
+    }
+
+}
+
+  private void inOrder_all_Reviews(BSTNode<Review> c)
+{
+    if(c==null) return;
+    inOrder_all_Reviews(c.left);
+
+        Review p = reviews.retrieve();
+        p.display();
+        System.out.println("********************");
+        System.out.println("********************");
+
+    inOrder_all_Reviews(c.right);
+}
+
+    
+    
+    public static Review convert_String_to_Review(String Line) {
+        String[] a = Line.split("," , 5);
+        Review r = new Review(
+            Integer.parseInt(a[0].trim()),
+            Integer.parseInt(a[1].trim()),
+            Integer.parseInt(a[2].trim()),
+            Integer.parseInt(a[3].trim()),
+            a[4]
+        );
+        return r;
+    }
+
+
+    public void load_reviews(String fileName) {
+        try {
+            File f = new File(fileName);
+            Scanner read = new Scanner(f);
+
+            System.out.println("Reading file: " + fileName);
+            System.out.println("-------------------------------------");
+            read.nextLine().trim();
+
+            while (read.hasNextLine()) {
+                String line = read.nextLine().trim();
+                if (!line.isEmpty()) {
+                    Review r = convert_String_to_Review(line);
+                    addReview(r);
+                }
+            }
+
+            read.close();
+            System.out.println("-------------------------------------");
+            System.out.println("File loaded successfully!\n");
+        } catch (Exception e) {
+            System.out.println("Error reading file: " + e.getMessage());
+        }
+    }
+
+    
+   
+
+}
