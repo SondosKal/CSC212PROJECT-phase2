@@ -1,15 +1,12 @@
 package csc212project11;
 
 
-
-import java.io.File;
-import java.util.Scanner;
-
 public class Product {
     private int productId;
     private String name;
     private double price;
     private int stock;
+    private AVL<Review> BSTreviews;
     private LinkedList<Review> reviews;
 
     public Product(int productId, String name, double price, int stock) {
@@ -17,7 +14,9 @@ public class Product {
         this.name = name;
         this.price = price;
         this.stock = stock;
-        this.reviews = new LinkedList<>();
+        reviews = new LinkedList<>();
+        this.BSTreviews = new AVL<>();
+
     }
 
     public void UpdateProduct(Product p) {
@@ -53,7 +52,8 @@ public class Product {
     }
 
     public void addReview(Review review) {
-        reviews.addLast(review);
+        reviews.insert(review);
+        BSTreviews.insert(review.getCustomerId(), review);
     }
 
     public double getAverageRating() {
@@ -82,6 +82,10 @@ public class Product {
                 reviews.findNext();
             }
         }
+    }
+    public AVL<Review>getReviews()
+    {
+    return BSTreviews;
     }
 
     public void setProductId(int productId) {
