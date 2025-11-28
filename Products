@@ -5,16 +5,17 @@ import java.io.File;
 import java.util.Scanner;
 
 public class Products {
-    private BST<Product> products;
- Products() {
-        products = new BST<>();
+    private AVL<Product> products;
+ 
+    Products() {
+        products = new AVL<>();
     }
     
-    public Products(BST<Product> input_products) {
+    public Products(AVL<Product> input_products) {
         products = input_products;
     }
     
-    public BST<Product> get_Products(){
+    public AVL<Product> get_Products(){
     	return products;
     }
 
@@ -32,24 +33,13 @@ public Product Search_Product_by_id(int id){
 
 
     // Add new product
-    public void addProduct(Product p) {
-        boolean inserted = products.insert(p.getProductId(), p);
-    if(inserted) {// not Exist
-            System.out.println("Product added: " + p.getName());
-        } else {
-            System.out.println("Product with ID " + p.getProductId() + " already exists!");
-        }
+	public void addProduct(Product p) {
+    if (Search_Product_by_id(p.getProductId())==null) { //not Exist
+        products.insert(p.getProductId(),p);
+        System.out.println("Product added: " + p.getName());
+    } else {
+        System.out.println("Product with ID " + p.getProductId() + " already exists!");
     }
-
-    // Remove a product by ID
-    public void removeProduct(int id) {
-
-    boolean removed = products.removeKey(id);
-    if (removed) {
-        System.out.println("Product removed: " + id);
-    }
-    else
-        System.out.println("Product ID not found!");
 }
 
 
@@ -119,21 +109,6 @@ private void inOrder_all_products(BSTNode<Product> p)
             p.addReview(r);
     }
 
-    public void assign2(Review r) {
-        if (!products.empty()) {
-            products.findFirst();
-            while (true) {
-                Product p1 = products.retrieve();
-                if (p1.getProductId() == r.getProductId()) {
-                    p1.addReview(r);
-                }
-                if (products.last())
-                    break;
-                else
-                    products.findNext();
-            }
-        }
-    }
 
     public static Product convert_String_to_product(String Line) {
         String a[] = Line.split(",");
